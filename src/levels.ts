@@ -3,37 +3,35 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Level, ROWS, COLS } from "./constants";
+import { Level, ROWS, COLS, COLORS } from "./constants";
 
 export const generateLevel = (id: number): Level => {
-  const layout: (number | null)[][] = Array.from({ length: 6 }, (_, r) => {
+  const complexity = Math.min(10, 4 + Math.floor(id / 5));
+  const patternType = id % 4;
+
+  const layout: (number | null)[][] = Array.from({ length: complexity }, (_, r) => {
     const isEven = r % 2 === 0;
     const cols = isEven ? COLS : COLS - 1;
     
-    // Choose a pattern type based on level ID
-    const patternType = id % 4;
-    
     return Array.from({ length: cols }, (_, c) => {
-      // Logic for different level archetypes
       if (patternType === 0) { // Alternating stripes
-        return (r + c) % (2 + (id % 3)) === 0 ? null : (r + id) % 6;
+        return (r + c) % (2 + (id % 3)) === 0 ? null : (r + id) % COLORS.length;
       } else if (patternType === 1) { // Checkerboard
-        return (r + c) % 2 === 0 ? (c % 6) : null;
+        return (r + c) % 2 === 0 ? (c % COLORS.length) : null;
       } else if (patternType === 2) { // V-Shape / Triangle
         const mid = cols / 2;
-        return Math.abs(c - mid) < (r + 1) ? (r % 6) : null;
+        return Math.abs(c - mid) < (r + 1) ? (r % COLORS.length) : null;
       } else { // Dense blocks
-        return Math.random() > 0.3 ? (Math.floor(Math.random() * 6)) : null;
+        return Math.random() > 0.3 ? (Math.floor(Math.random() * COLORS.length)) : null;
       }
     });
   });
 
   return {
     id,
-    name: `Level ${id}`,
+    name: `Level ${id + 1}`,
     layout,
   };
 };
 
-// Accessor for the first 1200 levels
-export const LEVELS_COUNT = 1200;
+export const LEVELS_COUNT = 54;
